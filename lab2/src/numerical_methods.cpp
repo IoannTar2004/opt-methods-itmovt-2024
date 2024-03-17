@@ -20,7 +20,7 @@ double method_of_golden_ratio(double(*f)(double), double a, double b, double eps
 
     double x1 = a + .382 * (b - a), x2 = a + .618 * (b - a);
     double y1 = f(x1), y2 = f(x2);
-    while (fabs(b - a) > 2 * eps) {
+    while (fabs(b - a) > eps) {
         if (y1 < y2) {
             b = x2;
             x2 = x1;
