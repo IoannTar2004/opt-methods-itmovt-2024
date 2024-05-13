@@ -1,19 +1,12 @@
-#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <cmath>
-
+#include <functional>
 using namespace std;
 
-double function(double x) {
-    return exp(-pow(0.12 - x * 0.47, 2) + pow(0.4 - x * 0.03, 2) + 2*(0.12 - x * 0.47)*(0.4 - x * 0.03) - (0.4 - x * 0.03));
-}
-
-double quadratic_approximation(double x_start, double delta_x, double eps1, double eps2, double (*f)(double)) {
-    int iter = 0;
+double quadratic_approximation(double x_start, double delta_x, double eps1, double eps2, const function<double(double)>& f) {
     double x1 = x_start;
     while (true) {
-        iter++;
         double x2 = x1 + delta_x;
         double f1 = f(x1), f2 = f(x2);
         double x3 = f1 > f2 ? x1 + 2 * delta_x : x1 - delta_x, f3 = f(x3);
@@ -31,10 +24,8 @@ double quadratic_approximation(double x_start, double delta_x, double eps1, doub
             double _x_ = ((x2 * x2 - x3 * x3) * f1 + (x3 * x3 - x1 * x1) * f2 + (x1 * x1 - x2 * x2) * f3) / denominator;
             bool less_eps1 = abs((f_min - f(_x_)) / f(_x_)) < eps1, less_eps2 = abs((x_min - _x_) / _x_) < eps2;
 
-            if (less_eps1 && less_eps2 || _x_ == 0) {
-                cout << "Количество итераций: " << iter << endl;
+            if (less_eps1 && less_eps2)
                 return _x_;
-            }
             else if (!(less_eps1 && less_eps2) && _x_ >= x1 && _x_ <= x3) {
                 x3 = x2;
                 x2 = min(_x_, x_min);
@@ -47,11 +38,4 @@ double quadratic_approximation(double x_start, double delta_x, double eps1, doub
             }
         }
     }
-}
-
-int main() {
-    system("chcp 65001 > NUL");
-    double x = quadratic_approximation(2, 0.01, 2.5, 0.05, function);
-    cout << "Точка минимума: x = " << x << ", y = " << function(x) << endl;
-    return 0;
 }
